@@ -87,15 +87,11 @@ const register = async (payload: IUser & { verificationToken?: string }) => {
   }
   
   const result = await User.create(payload);
-<<<<<<< HEAD
-  const { _id, email, role, subscriptionType, name, postsCount } = result;
-=======
   
   // Clean up OTP record after successful registration
   await OTPModel.deleteOne({ email: userEmail });
   
-  const { email, role, subscriptionType, name, postsCount } = result;
->>>>>>> 422a0bf (CORRECT: Verify OTP)
+  const { _id, email, role, subscriptionType, name, postsCount } = result;
   const accessToken = JwtHalers.createToken(
     { _id, email, role, subscriptionType, name, postsCount },
     config.jwt.secret as Secret,

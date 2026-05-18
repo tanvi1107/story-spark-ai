@@ -87,20 +87,6 @@ const VerifyEmail = (payload) => __awaiter(void 0, void 0, void 0, function* () 
       </html>
       `,
         };
-<<<<<<< HEAD
-        if (config_1.default.verify_email && config_1.default.verify_password) {
-            yield transporter.sendMail(mailOptions);
-        }
-        else {
-            console.log("==================================================");
-            console.log(`[DEVELOPMENT MOCK EMAIL] OTP for ${email} is: ${otp}`);
-            console.log("==================================================");
-        }
-        return { otp, expiresAt };
-    }
-    catch (error) {
-        console.error("Failed to verify email:", error);
-=======
         yield transporter.sendMail(mailOptions);
         return {
             expiresAt,
@@ -110,7 +96,6 @@ const VerifyEmail = (payload) => __awaiter(void 0, void 0, void 0, function* () 
         if (error instanceof api_error_1.default) {
             throw error;
         }
->>>>>>> 422a0bf (CORRECT: Verify OTP)
         throw new api_error_1.default(500, "Failed to send email");
     }
 });

@@ -69,17 +69,11 @@ const register = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         throw new api_error_1.default(http_status_1.default.NOT_FOUND, "User already exist!");
     }
     const result = yield user_model_1.User.create(payload);
-<<<<<<< HEAD
+    // Clean up OTP record after successful registration
+    yield otp_model_1.OTPModel.deleteOne({ email: userEmail });
     const { _id, email, role, subscriptionType, name, postsCount } = result;
     const accessToken = jwt_helper_1.JwtHalers.createToken({ _id, email, role, subscriptionType, name, postsCount }, config_1.default.jwt.secret, config_1.default.jwt.expires_in);
     const refreshToken = jwt_helper_1.JwtHalers.createToken({ _id, email, role, subscriptionType, name, postsCount }, config_1.default.jwt.refresh_secret, config_1.default.jwt.refresh_expires_in);
-=======
-    // Clean up OTP record after successful registration
-    yield otp_model_1.OTPModel.deleteOne({ email: userEmail });
-    const { email, role, subscriptionType, name, postsCount } = result;
-    const accessToken = jwt_helper_1.JwtHalers.createToken({ email, role, subscriptionType, name, postsCount }, config_1.default.jwt.secret, config_1.default.jwt.expires_in);
-    const refreshToken = jwt_helper_1.JwtHalers.createToken({ email, role, subscriptionType, name, postsCount }, config_1.default.jwt.refresh_secret, config_1.default.jwt.refresh_expires_in);
->>>>>>> 422a0bf (CORRECT: Verify OTP)
     return {
         accessToken,
         refreshToken,
