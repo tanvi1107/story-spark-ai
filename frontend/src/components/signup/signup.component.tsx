@@ -22,16 +22,32 @@ interface Inputs extends IRegisterInfo {
   otp: string;
 }
 
+const getPasswordError = (password: string) => {
+  if (password.length < 8) {
+    return "Password must be at least 8 characters long";
+  }
+  if (!/[A-Z]/.test(password)) {
+    return "Password must contain at least one uppercase letter";
+  }
+  if (!/[a-z]/.test(password)) {
+    return "Password must contain at least one lowercase letter";
+  }
+  if (!/[0-9]/.test(password)) {
+    return "Password must contain at least one number";
+  }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    return "Password must contain at least one special character";
+  }
+
+  return "";
+};
+
 const SignUpComponent = () => {
   const navigate = useNavigate();
   const [emailVerify] = useEmailVerifyMutation();
   const [verifyOtp] = useVerifyOtpMutation();
   const [registerUser] = useRegisterUserMutation();
-  const { register,
-          handleSubmit,
-          watch,
-          formState: { errors },
-        } = useForm<Inputs>();
+  const { register, handleSubmit, watch } = useForm<Inputs>();
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [showOtpField, setShowOtpField] = useState<boolean>(false);
   const [registerInfo, setRegisterInfo] = useState<IRegisterInfo>();
@@ -55,6 +71,11 @@ const SignUpComponent = () => {
       };
       if (password !== confirmPassword) {
         toast.error("Passwords do not match!");
+        return;
+      }
+      const passwordError = getPasswordError(data.password);
+      if (passwordError) {
+        toast.error(passwordError);
         return;
       }
       setIsBusy(true);
@@ -132,93 +153,49 @@ const SignUpComponent = () => {
   return (
     <div className="bg-slate-700 text-white min-h-screen">
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-10 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="text-center text-5xl text-indigo-300 font-bold">
-            STORY SPARK AI
-          </h2>
-          <h2 className="mt-4 text-center text-2xl/9 font-bold tracking-tight text-gray-400">
-            Sign up to your account
-          </h2>
-        </div>
+        {/* Header removed as requested */}
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
           {!showOtpField ? (
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-             <SSInput
-               label="Name"
+              <SSInput
+                label="Name"
                 name="name"
                 placeholder="Enter your name"
                 required={true}
                 icon="fas fa-user"
                 register={register}
-                validation={{
-                  minLength: {
-                    value: 2,
-                    message: "Name must be at least 2 characters",
-                  },
-                  maxLength: {
-                    value: 50,
-                    message: "Name must be less than 50 characters",
-                  },
-                  pattern: {
-                    value: /^[a-zA-Z\s]+$/,
-                    message: "Name can only contain letters and spaces",
-                  },
-                }}
-/>
-
-            {errors.name && (
-            <p className="text-red-400 text-sm">
-             {errors.name.message}
-            </p>
-            )}
-      <SSInput
-          label="Email address"
-          name="email"
-          type="email"
-          placeholder="Enter your email"
-          required={true}
-          icon="fas fa-envelope"
-          register={register}
-          validation={{
-          required: "Email is required",
-          pattern: {
-          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
-           message: "Invalid email address",
-          },
-          }}
-          error={errors.email}
-        />
-      <SSInput
-         label="Password"
-         name="password"
-         type="password"
-         placeholder="Enter your password"
-         required={true}
-         icon="fas fa-lock"
-         register={register}
-          validation={{
-             required: "Password is required",
-             minLength: {
-             value: 6,
-             message: "Password must be at least 6 characters",
-            },
-            }}
-           error={errors.password}
-       />
-
-      <SSInput
-  label="Confirm Password"
-  name="confirmPassword"
-  type="password"
-  placeholder="Confirm your password"
-  required={true}
-  icon="fas fa-lock"
-  register={register}
-  validation={{
-    required: "Confirm Password is required",
-  }}
-  error={errors.confirmPassword}
-/>
+              />
+              <SSInput
+                label="Email address"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                required={true}
+                icon="fas fa-envelope"
+                register={register}
+              />
+              <SSInput
+                label="Password"
+                name="password"
+                type="password"
+                placeholder="Enter your password"
+                required={true}
+                icon="fas fa-lock"
+                register={register}
+              />
+              <p className="text-xs text-gray-500 -mt-2">
+                Use at least 8 characters with uppercase, lowercase, number,
+                and special character.
+              </p>
+              <SSInput
+                label="Confirm Password"
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirm your password"
+                required={true}
+                icon="fas fa-eye"
+                register={register}
+              />
               <SSButton text="Sign Up" type="submit" isLoading={isBusy} />
             </form>
           ) : (

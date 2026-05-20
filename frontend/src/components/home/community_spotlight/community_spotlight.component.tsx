@@ -75,7 +75,9 @@ const CommunitySpotlightComponent = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 col-span-3">No spotlight stories yet.</p>
+          <p className="col-span-3 rounded-lg border border-slate-700/70 bg-slate-900/40 px-4 py-4 text-slate-300">
+            No spotlight stories yet.
+          </p>
         )}
       </div>
     </div>
