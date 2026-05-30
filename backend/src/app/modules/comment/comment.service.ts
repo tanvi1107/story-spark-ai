@@ -23,8 +23,11 @@ const createComment = async (
   if (!post) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Post not found!");
   }
-  post.commentsCount = post.commentsCount + 1;
-  await post.save();
+  // Use an atomic $inc update instead of the read-modify-write pattern.
+  // With concurrent requests, both would read the same commentsCount value
+  // and both would write count + 1, losing one increment per race.
+  // findByIdAndUpdate with $inc is a single atomic MongoDB operation.
+  await Post.findByIdAndUpdate(post._id, { $inc: { commentsCount: 1 } });
   const commentData: Omit<IComment, "parentCommentId"> = {
     postId: new Types.ObjectId(payload.postId),
     userId: user._id,
