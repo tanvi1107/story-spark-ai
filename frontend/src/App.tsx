@@ -111,6 +111,7 @@ const router = createBrowserRouter([
       { path: "guidelines", element: <GuidelinesComponent /> },
       { path: "contributors", element: <ContributorsComponent /> },
       { path: "report-bug", element: <ReportBug /> },
+      { path: "forgot-password", element: <ForgotPasswordComponent /> },
 
       // Protected Sub-Tree running under the RootLayout context
       {
