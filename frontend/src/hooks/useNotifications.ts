@@ -4,8 +4,8 @@ import {
   useGetNotificationsQuery,
   useMarkNotificationReadMutation,
 } from "../redux/apis/notification.api";
-import { connectSocket, disconnectSocket, getSocketIo } from "../socket/socket.oi";
-import type { NotificationItem } from "../models/notification";
+import { connectSocket, disconnectSocket } from "../socket/socket.oi";
+import type { NotificationItem, INotification } from "../models/notification";
 
 /**
  * Notification bell: REST + Socket.IO real-time updates.
@@ -13,7 +13,7 @@ import type { NotificationItem } from "../models/notification";
  */
 export const useNotifications = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [realtimeNotifications, setRealtimeNotifications] = useState<NotificationItem[]>([]);
+  const [realtimeNotifications, setRealtimeNotifications] = useState<INotification[]>([]);
   const isAuthed = isLoggedIn();
 
   const { data, isFetching, refetch } = useGetNotificationsQuery(undefined, {
@@ -24,17 +24,17 @@ export const useNotifications = () => {
   // Merge REST data with real-time updates
   const notifications = useMemo(() => {
     const baseNotifications = data ?? [];
-    const merged = new Map<string, NotificationItem>();
+const merged = new Map<string, NotificationItem>();
 
-    for (const notification of [...realtimeNotifications, ...baseNotifications]) {
-      merged.set(notification._id, notification);
-    }
+for (const notification of [...realtimeNotifications, ...baseNotifications]) {
+  merged.set(notification._id, notification);
+}
 
-    return [...merged.values()].sort((a, b) => {
-      const aTime = new Date(a.createdAt).getTime();
-      const bTime = new Date(b.createdAt).getTime();
-      return bTime - aTime;
-    });
+return [...merged.values()].sort((a, b) => {
+  const aTime = new Date(a.createdAt).getTime();
+  const bTime = new Date(b.createdAt).getTime();
+  return bTime - aTime;
+});
   }, [data, realtimeNotifications]);
 
   const unreadCount = notifications.filter((item) => !item.isRead).length;
@@ -79,7 +79,7 @@ export const useNotifications = () => {
       };
 
       // Listen for real-time notifications
-      const handleNewNotification = (notification: NotificationItem) => {
+      const handleNewNotification = (notification: INotification) => {
         console.log("[Story Spark] Received notification:", notification);
         setRealtimeNotifications((prev) => {
           const next = [notification, ...prev.filter((item) => item._id !== notification._id)];
