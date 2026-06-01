@@ -13,51 +13,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Detect changed workspaces
-        id: changes
-        shell: bash
-        run: |
-          files="$(git diff --name-only "${{ github.event.pull_request.base.sha }}...HEAD")"
-          echo "$files"
-
-          if echo "$files" | grep -q '^frontend/'; then
-            echo "frontend=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "frontend=false" >> "$GITHUB_OUTPUT"
-          fi
-
-          if echo "$files" | grep -q '^backend/'; then
-            echo "backend=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "backend=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - uses: pnpm/action-setup@v2
-        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true'
-        with:
-          version: 9.15.9
-
-      - uses: actions/setup-node@v4
-        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: pnpm
+          cache: npm
 
       - name: Install dependencies
-        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true'
-        run: pnpm install --frozen-lockfile
+        run: npm install --include=optional
 
-      - name: Rebuild native bindings for current platform
-        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true'
-        run: pnpm rebuild
+      - name: Work around npm optional dependency bug (Rollup Linux binary)
+        run: npm install -w story-spark-ai-frontend --no-save @rollup/rollup-linux-x64-gnu
 
-      - name: Build backend
-        if: steps.changes.outputs.backend == 'true'
-        run: pnpm --filter story-spark-ai-backend build
+      - name: Work around npm optional dependency bug (Lightning CSS Linux binary)
+        run: npm install -w story-spark-ai-frontend --no-save lightningcss-linux-x64-gnu
 
-      - name: Build frontend
-        if: steps.changes.outputs.frontend == 'true'
-        run: pnpm --filter story-spark-ai-frontend build
+      - name: Build
+        run: npm run build
