@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FAQItem } from "../help_center.utils";
 
@@ -40,9 +40,7 @@ const FAQAccordion: FC<FAQAccordionProps> = ({ items }) => {
           <i className="fa-solid fa-circle-question" aria-hidden="true" />
           <span className="text-sm font-semibold">FREQUENTLY ASKED QUESTIONS</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-          Common Questions
-        </h2>
+        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">Common Questions</h2>
         <p className="text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
           Find quick answers to the most common StorySparkAI questions,
           workflows, and troubleshooting topics.

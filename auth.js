@@ -6,7 +6,7 @@
 let currentMode = 'signin';
 
 // ── Google Identity Services (GIS) Client ID ──
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = (typeof window !== 'undefined' && window.VITE_GOOGLE_CLIENT_ID) ? window.VITE_GOOGLE_CLIENT_ID : 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
 
 let isSubmitting = false;
 
@@ -242,17 +242,26 @@ function setSubmitting(submitting) {
     isSubmitting = submitting;
     const submitBtn = document.getElementById('submit-btn');
     const spinner = document.getElementById('submit-btn-spinner');
+    const submitBtnText = document.getElementById('submit-btn-text'); 
     const emailField = document.getElementById('email-field');
     const nameField = document.getElementById('name-field');
     const passwordField = document.getElementById('password-field');
     const confirmPasswordField = document.getElementById('confirm-password-field');
 
-    if (submitBtn) submitBtn.disabled = submitting;
+    if (submitBtn) {
+    submitBtn.disabled = submitting;
+    submitBtn.classList.toggle('opacity-70', submitting);
+    submitBtn.classList.toggle('cursor-not-allowed', submitting);}
     if (spinner) spinner.classList.toggle('hidden', !submitting);
+    if (submitBtnText) {
+    submitBtnText.textContent = submitting
+        ? 'Processing...'
+        : 'Create Account';}
     if (emailField) emailField.disabled = submitting;
     if (nameField) nameField.disabled = submitting;
     if (passwordField) passwordField.disabled = submitting;
     if (confirmPasswordField) confirmPasswordField.disabled = submitting;
+    
 }
 
 /* ── Advanced Particle System (Canvas + Mouse Interactions) ── */
@@ -522,6 +531,7 @@ if (passwordField) {
   passwordField.addEventListener("keyup", (event) => {
     const loginCapsWarning = document.getElementById("login-caps-lock-warning");
     const signupCapsWarning = document.getElementById("signup-caps-lock-warning");
+    const confirmCapsWarning = document.getElementById("confirm-caps-lock-warning");
 
     const isCapsLockOn = event.getModifierState("CapsLock");
 
@@ -531,6 +541,9 @@ if (passwordField) {
 
     if (signupCapsWarning) {
       signupCapsWarning.classList.toggle("hidden", !isCapsLockOn);
+    }
+    if (confirmCapsWarning) {
+      confirmCapsWarning.classList.toggle("hidden", !isCapsLockOn);
     }
   });
 }
@@ -573,7 +586,7 @@ async function handleFormSubmit(e) {
     setAlert('info', currentMode === 'signup' ? 'Creating your account…' : 'Signing you in…');
 
     try {
-        const endpoint = currentMode === 'signup' ? '/api/auth/register' : '/api/auth/login';
+        const endpoint = currentMode === 'signup' ? '/api/v1/auth/register' : '/api/v1/auth/login';
         const body = currentMode === 'signup'
             ? { email, name, password }
             : { email, password, rememberMe };
@@ -683,7 +696,7 @@ function decodeJwt(token) {
 
 async function handleGoogleCredentialResponse(response) {
     try {
-        const res = await fetch('/api/auth/google-login', {
+        const res = await fetch('/api/v1/auth/google-login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: response.credential }),
@@ -696,7 +709,14 @@ async function handleGoogleCredentialResponse(response) {
             return;
         }
 
-        localStorage.setItem('accessToken', data.data.accessToken);
+        const token = data?.data?.accessToken || data?.accessToken || data?.token || (typeof data?.data === 'string' ? data.data : null);
+        
+        if (!token) {
+            setAlert('error', 'Google login failed. Invalid token received from server.');
+            return;
+        }
+
+        localStorage.setItem('accessToken', token);
         setAlert('success', 'Signed in with Google successfully! Redirecting…');
         setTimeout(() => {
             window.location.href = '/dashboard';

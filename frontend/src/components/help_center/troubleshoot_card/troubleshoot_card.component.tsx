@@ -7,7 +7,6 @@ interface TroubleshootCardProps {
 
 const TroubleshootCard: FC<TroubleshootCardProps> = ({ item }) => {
   return (
-
     <article className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/5 hover:border-red-500/40 dark:hover:border-red-500/30 shadow-sm p-5 sm:p-6 rounded-2xl transition-all duration-300 hover:scale-[1.01] hover:shadow-md w-full box-border">
       <div className="flex flex-col sm:flex-row items-start gap-4" >  </div>
         <div
@@ -48,7 +47,6 @@ const TroubleshootCard: FC<TroubleshootCardProps> = ({ item }) => {
           <div className="space-y-3 text-sm">
            
             <div>
-
               <span className="text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider text-[10px] sm:text-xs">
                 Solution
               </span>
@@ -57,10 +55,8 @@ const TroubleshootCard: FC<TroubleshootCardProps> = ({ item }) => {
              
 
             </div>
-
           </div>
         </div>
-
       </div>
     </article>
   );

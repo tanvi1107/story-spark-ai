@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { HelpSearchBar } from "../help_search_bar/help_search_bar.component";
 
 interface HelpHeroProps {
-  searchQuery: string;
-  onSearchChange: (value: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (value: string) => void;
   resultCount?: number;
 }
 
@@ -31,8 +31,7 @@ const HelpHero: FC<HelpHeroProps> = ({
       <div
         className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03] pointer-events-none select-none"
         style={{
-          backgroundImage:
-            "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
+          backgroundImage: "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
           backgroundSize: "40px 40px",
         }}
       />
@@ -59,10 +58,10 @@ const HelpHero: FC<HelpHeroProps> = ({
 
         {/* Main content */}
         <motion.div
-          className="text-center max-w-4xl mx-auto w-full box-border"
-          initial={{ opacity: 0, y: 24 }}
+          className="text-center max-w-4xl mx-auto"
+          initial={{ opacity: 0, y: 35 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7 }}
         >
           <div className="inline-flex items-center justify-center mx-auto px-4 py-1.5 mb-5 sm:mb-6 rounded-full border border-blue-500/10 dark:border-white/10 bg-blue-500/5 text-blue-600 dark:text-blue-400 select-none shadow-sm">
             <span className="text-xs font-bold uppercase tracking-wider">
@@ -73,7 +72,7 @@ const HelpHero: FC<HelpHeroProps> = ({
             </span>
           </div>
 
-          <h1
+          <motion.h1
             id="help-center-title"
             className="text-3xl sm:text-5xl lg:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-700 to-indigo-800 dark:from-slate-100 dark:via-blue-400 dark:to-indigo-400 mb-4 sm:mb-5 tracking-tight"
           >
